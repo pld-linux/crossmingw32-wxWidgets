@@ -2,19 +2,19 @@
 Summary:	wxWidgets library - Mingw32 cross version
 Summary(pl):	Biblioteka wxWidgets - wersja skro¶na dla Mingw32
 Name:		crossmingw32-%{realname}
-Version:	2.5.3
+Version:	2.6.1
 Release:	1
 License:	wxWidgets Licence (LGPL with exception)
 Group:		Development/Libraries
-Source0:	http://dl.sourceforge.net/wxwindows/wxAll-%{version}.tar.gz
+Source0:	http://dl.sourceforge.net/wxwindows/%{realname}-%{version}.tar.bz2
 # Source0-md5:	33994e85efc06307977d2ddb9cbd91a1
 Patch0:		%{realname}-samples.patch
-Patch1:		%{realname}-eggtrayicon.patch
-Patch2:		%{realname}-utils.patch
+Patch1:		%{realname}-ac.patch
+Patch2:		%{realname}-gif0delay.patch
 URL:		http://www.wxWidgets.org/
-BuildRequires:	autoconf
+BuildRequires:	autoconf >= 2.58
 BuildRequires:	automake
-BuildRequires:	bakefile >= 0.1.4
+BuildRequires:	bakefile >= 0.1.8
 BuildRequires:	crossmingw32-gcc-c++
 BuildRequires:	crossmingw32-libjpeg
 BuildRequires:	crossmingw32-libpng
@@ -71,6 +71,13 @@ Group:		Applications/Emulators
 %patch1 -p1
 %patch2 -p1
 
+echo 'AC_DEFUN([AM_PATH_GTK],[:])' > fake-am_path_gtk.m4
+
+# bakefile.m4 from 0.1.8
+tail -n +1518 aclocal.m4 | head -n 1397 > bakefile.m4
+# AC_BAKEFILE_PROG_* macros
+tail -n +721 aclocal.m4 | head -n 142 >> bakefile.m4
+
 %build
 CC=%{target}-gcc ; export CC
 CXX=%{target}-g++ ; export CXX
@@ -83,6 +90,7 @@ RANLIB=%{target}-ranlib ; export RANLIB
 LDSHARED="%{target}-gcc -shared" ; export LDSHARED
 TARGET="%{target}" ; export TARGET
 
+cp -f /usr/share/automake/config.sub .
 %{__aclocal} -I .
 %{__autoconf}
 
@@ -118,7 +126,7 @@ cp -r $RPM_BUILD_ROOT%{_libdir}/*.dll $RPM_BUILD_ROOT%{_datadir}/wine/windows/sy
 cp -r $RPM_BUILD_ROOT%{_libdir}/wx $RPM_BUILD_ROOT%{arch}/lib/
 cp -r $RPM_BUILD_ROOT%{_includedir} $RPM_BUILD_ROOT%{arch}
 
-ln -s %{arch}/lib/wx/config/i386-mingw32-msw-ansi-release-2.5 $RPM_BUILD_ROOT%{_bindir}
+ln -s %{arch}/lib/wx/config/i386-mingw32-msw-ansi-release-2.6 $RPM_BUILD_ROOT%{_bindir}
 
 rm $RPM_BUILD_ROOT/%{_bindir}/wx-config
 
