@@ -7,7 +7,7 @@ Release:	1
 License:	wxWidgets Licence (LGPL with exception)
 Group:		Development/Libraries
 Source0:	http://dl.sourceforge.net/wxwindows/%{realname}-%{version}.tar.bz2
-# Source0-md5:	33994e85efc06307977d2ddb9cbd91a1
+# Source0-md5:	045f0edad0988620a4aa36096bb16e28
 Patch0:		%{realname}-samples.patch
 Patch1:		%{realname}-ac.patch
 Patch2:		%{realname}-gif0delay.patch
