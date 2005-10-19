@@ -2,19 +2,19 @@
 Summary:	wxWidgets library - Mingw32 cross version
 Summary(pl):	Biblioteka wxWidgets - wersja skro¶na dla Mingw32
 Name:		crossmingw32-%{realname}
-Version:	2.6.1
+Version:	2.6.2
 Release:	1
 License:	wxWidgets Licence (LGPL with exception)
 Group:		Development/Libraries
 Source0:	http://dl.sourceforge.net/wxwindows/%{realname}-%{version}.tar.bz2
-# Source0-md5:	045f0edad0988620a4aa36096bb16e28
+# Source0-md5:	ee0aa211febd992c8540e6c9df749b51
 Patch0:		%{realname}-samples.patch
 Patch1:		%{realname}-ac.patch
 Patch2:		%{realname}-gif0delay.patch
 URL:		http://www.wxWidgets.org/
 BuildRequires:	autoconf >= 2.58
 BuildRequires:	automake
-BuildRequires:	bakefile >= 0.1.8
+#BuildRequires:	bakefile >= 0.1.9
 BuildRequires:	crossmingw32-gcc-c++
 BuildRequires:	crossmingw32-libjpeg
 BuildRequires:	crossmingw32-libpng
@@ -40,8 +40,6 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %ifarch alpha sparc sparc64 sparcv9
 %define		optflags	-O2
 %endif
-
-%define		rpmcxxflags	"%{rpmcflags}"
 
 %description
 wxWidgets is a free C++ library for cross-platform GUI development.
@@ -73,11 +71,6 @@ Group:		Applications/Emulators
 
 echo 'AC_DEFUN([AM_PATH_GTK],[:])' > fake-am_path_gtk.m4
 
-# bakefile.m4 from 0.1.8
-tail -n +1518 aclocal.m4 | head -n 1397 > bakefile.m4
-# AC_BAKEFILE_PROG_* macros
-tail -n +721 aclocal.m4 | head -n 142 >> bakefile.m4
-
 %build
 CC=%{target}-gcc ; export CC
 CXX=%{target}-g++ ; export CXX
@@ -91,12 +84,13 @@ LDSHARED="%{target}-gcc -shared" ; export LDSHARED
 TARGET="%{target}" ; export TARGET
 
 cp -f /usr/share/automake/config.sub .
-%{__aclocal} -I .
+%{__aclocal} -I build/aclocal
 %{__autoconf}
 
 %configure \
 	--with-msw \
 	--with-opengl \
+	--disable-precomp-headers \
 	--enable-official-build \
 	--enable-std-iostreams \
 	--enable-controls \
@@ -110,7 +104,8 @@ cp -f /usr/share/automake/config.sub .
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{arch}/{bin,include,lib},%{_datadir}/wine/windows/system}
 
-%{__make} install DESTDIR=$RPM_BUILD_ROOT
+%{__make} install \
+	DESTDIR=$RPM_BUILD_ROOT
 
 sed -i  -e 's@includedir="/usr/include"@includedir="%{arch}/include"@' \
 	-e 's@libdir="/usr/lib"@libdir="%{arch}/lib"@' \
