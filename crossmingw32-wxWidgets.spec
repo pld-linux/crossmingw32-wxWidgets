@@ -123,7 +123,7 @@ cp -r $RPM_BUILD_ROOT%{_includedir} $RPM_BUILD_ROOT%{arch}
 
 ln -s %{arch}/lib/wx/config/i386-mingw32-msw-ansi-release-2.6 $RPM_BUILD_ROOT%{_bindir}
 
-rm $RPM_BUILD_ROOT/%{_bindir}/wx-config
+rm $RPM_BUILD_ROOT%{_bindir}/wx-config
 
 %clean
 rm -rf $RPM_BUILD_ROOT
