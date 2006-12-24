@@ -2,12 +2,12 @@
 Summary:	wxWidgets library - Mingw32 cross version
 Summary(pl):	Biblioteka wxWidgets - wersja skro¶na dla Mingw32
 Name:		crossmingw32-%{realname}
-Version:	2.6.2
+Version:	2.8.0
 Release:	1
 License:	wxWidgets Licence (LGPL with exception)
 Group:		Development/Libraries
 Source0:	http://dl.sourceforge.net/wxwindows/%{realname}-%{version}.tar.bz2
-# Source0-md5:	ee0aa211febd992c8540e6c9df749b51
+# Source0-md5:	183a1fe136d7caacb60c717bbbef9788
 Patch0:		%{realname}-samples.patch
 Patch1:		%{realname}-ac.patch
 Patch2:		%{realname}-gif0delay.patch
@@ -69,8 +69,6 @@ Group:		Applications/Emulators
 %patch1 -p1
 %patch2 -p1
 
-echo 'AC_DEFUN([AM_PATH_GTK],[:])' > fake-am_path_gtk.m4
-
 %build
 CC=%{target}-gcc ; export CC
 CXX=%{target}-g++ ; export CXX
@@ -121,7 +119,7 @@ cp -r $RPM_BUILD_ROOT%{_libdir}/*.dll $RPM_BUILD_ROOT%{_datadir}/wine/windows/sy
 cp -r $RPM_BUILD_ROOT%{_libdir}/wx $RPM_BUILD_ROOT%{arch}/lib/
 cp -r $RPM_BUILD_ROOT%{_includedir} $RPM_BUILD_ROOT%{arch}
 
-ln -s %{arch}/lib/wx/config/i386-mingw32-msw-ansi-release-2.6 $RPM_BUILD_ROOT%{_bindir}
+ln -s %{arch}/lib/wx/config/i386-mingw32-msw-ansi-release-2.8 $RPM_BUILD_ROOT%{_bindir}
 
 rm $RPM_BUILD_ROOT%{_bindir}/wx-config
 
