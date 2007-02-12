@@ -1,6 +1,6 @@
 %define		realname	wxWidgets
 Summary:	wxWidgets library - Mingw32 cross version
-Summary(pl):	Biblioteka wxWidgets - wersja skro¶na dla Mingw32
+Summary(pl.UTF-8):   Biblioteka wxWidgets - wersja skroÅ›na dla Mingw32
 Name:		crossmingw32-%{realname}
 Version:	2.8.1
 Release:	1
@@ -46,21 +46,21 @@ wxWidgets is a free C++ library for cross-platform GUI development.
 With wxWidgets, you can create applications for different GUIs (GTK+,
 Motif/LessTif, MS Windows, Mac) from the same source code.
 
-%description -l pl
-wxWidgets to wolnodostêpna biblioteka napisana w C++ umo¿liwiaj±ca
-rozwijanie wieloplatformowych programów GUI. Przy u¿yciu wxWidgets
-mo¿na tworzyæ aplikacje dla ró¿nych GUI (GTK+, Motif/LessTif, MS
-Windows, Mac) z tego samego kodu ¼ród³owego.
+%description -l pl.UTF-8
+wxWidgets to wolnodostÄ™pna biblioteka napisana w C++ umoÅ¼liwiajÄ…ca
+rozwijanie wieloplatformowych programÃ³w GUI. Przy uÅ¼yciu wxWidgets
+moÅ¼na tworzyÄ‡ aplikacje dla rÃ³Å¼nych GUI (GTK+, Motif/LessTif, MS
+Windows, Mac) z tego samego kodu ÅºrÃ³dÅ‚owego.
 
 %package dll
 Summary:	%{realname} - DLL library for Windows
-Summary(pl):	%{realname} - biblioteka DLL dla Windows
+Summary(pl.UTF-8):   %{realname} - biblioteka DLL dla Windows
 Group:		Applications/Emulators
 
 %description dll
 %{realname} - DLL libraries for Windows.
 
-%description dll -l pl
+%description dll -l pl.UTF-8
 %{realname} - biblioteki DLL dla Windows.
 
 %prep
