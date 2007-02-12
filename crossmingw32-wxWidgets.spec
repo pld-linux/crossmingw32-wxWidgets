@@ -1,6 +1,6 @@
 %define		realname	wxWidgets
 Summary:	wxWidgets library - Mingw32 cross version
-Summary(pl.UTF-8):   Biblioteka wxWidgets - wersja skrośna dla Mingw32
+Summary(pl.UTF-8):	Biblioteka wxWidgets - wersja skrośna dla Mingw32
 Name:		crossmingw32-%{realname}
 Version:	2.8.1
 Release:	1
@@ -54,7 +54,7 @@ Windows, Mac) z tego samego kodu źródłowego.
 
 %package dll
 Summary:	%{realname} - DLL library for Windows
-Summary(pl.UTF-8):   %{realname} - biblioteka DLL dla Windows
+Summary(pl.UTF-8):	%{realname} - biblioteka DLL dla Windows
 Group:		Applications/Emulators
 
 %description dll
