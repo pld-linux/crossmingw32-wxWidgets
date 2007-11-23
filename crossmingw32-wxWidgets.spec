@@ -2,12 +2,12 @@
 Summary:	wxWidgets library - Mingw32 cross version
 Summary(pl.UTF-8):	Biblioteka wxWidgets - wersja skrośna dla Mingw32
 Name:		crossmingw32-%{realname}
-Version:	2.8.1
+Version:	2.8.7
 Release:	1
 License:	wxWidgets Licence (LGPL with exception)
 Group:		Development/Libraries
 Source0:	http://ftp.wxwidgets.org/pub/%{version}/%{realname}-%{version}.tar.bz2
-# Source0-md5:	fe01afe1c055bc82875682e5905c7378
+# Source0-md5:	e3455083afdf6404a569a8bf0701cf13
 Patch0:		%{realname}-samples.patch
 Patch1:		%{realname}-ac.patch
 Patch2:		%{realname}-gif0delay.patch
