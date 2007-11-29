@@ -4,7 +4,7 @@ Summary(pl.UTF-8):	Biblioteka wxWidgets - wersja skrośna dla Mingw32
 Name:		crossmingw32-%{realname}
 Version:	2.8.7
 Release:	1
-License:	wxWidgets Licence (LGPL with exception)
+License:	wxWidgets Licence (LGPL v2+ with exception)
 Group:		Development/Libraries
 Source0:	http://ftp.wxwidgets.org/pub/%{version}/%{realname}-%{version}.tar.bz2
 # Source0-md5:	e3455083afdf6404a569a8bf0701cf13
@@ -28,16 +28,19 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		no_install_post_strip	1
 
-%define		target		i386-mingw32
-%define		target_platform	i386-pc-mingw32
-%define		arch		%{_prefix}/%{target}
-%define		gccarch		%{_prefix}/lib/gcc-lib/%{target}
-%define		gcclib		%{_prefix}/lib/gcc-lib/%{target}/%{version}
+%define		target			i386-mingw32
+%define		target_platform		i386-pc-mingw32
 
-%define		__cc		%{target}-gcc
-%define		__cxx		%{target}-g++
+%define		_sysprefix		/usr
+%define		_sysbindir		%{_sysprefix}/bin
+%define		_prefix			%{_sysprefix}/%{target}
+%define		_pkgconfigdir		%{_prefix}/lib/pkgconfig
+%define		_dlldir			/usr/share/wine/windows/system
+%define		__cc			%{target}-gcc
+%define		__cxx			%{target}-g++
 
-%ifarch alpha sparc sparc64 sparcv9
+%ifnarch %{ix86}
+# arch-specific flags (like alpha's -mieee) are not valid for i386 gcc
 %define		optflags	-O2
 %endif
 
@@ -70,17 +73,6 @@ Group:		Applications/Emulators
 %patch2 -p1
 
 %build
-CC=%{target}-gcc ; export CC
-CXX=%{target}-g++ ; export CXX
-LD=%{target}-ld ; export LD
-AR=%{target}-ar ; export AR
-AS=%{target}-as ; export AS
-CROSS_COMPILE=1 ; export CROSS_COMPILE
-CPPFLAGS="-I%{arch}/include" ; export CPPFLAGS
-RANLIB=%{target}-ranlib ; export RANLIB
-LDSHARED="%{target}-gcc -shared" ; export LDSHARED
-TARGET="%{target}" ; export TARGET
-
 cp -f /usr/share/automake/config.sub .
 %{__aclocal} -I build/aclocal
 %{__autoconf}
@@ -100,42 +92,33 @@ cp -f /usr/share/automake/config.sub .
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT{%{arch}/{bin,include,lib},%{_datadir}/wine/windows/system}
 
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
 
-sed -i  -e 's@includedir="/usr/include"@includedir="%{arch}/include"@' \
-	-e 's@libdir="/usr/lib"@libdir="%{arch}/lib"@' \
-	$RPM_BUILD_ROOT%{_libdir}/wx/config/*
+install -d $RPM_BUILD_ROOT%{_dlldir}
+mv -f $RPM_BUILD_ROOT%{_libdir}/*.dll $RPM_BUILD_ROOT%{_dlldir}
 
 %if 0%{!?debug:1}
-%{target}-strip $RPM_BUILD_ROOT%{_libdir}/*.dll
+%{target}-strip --strip-unneeded -R.comment -R.note $RPM_BUILD_ROOT%{_dlldir}/*.dll
 %{target}-strip -g -R.comment -R.note $RPM_BUILD_ROOT%{_libdir}/*.a
 %endif
 
-cp -r $RPM_BUILD_ROOT%{_libdir}/*.a $RPM_BUILD_ROOT%{arch}/lib
-cp -r $RPM_BUILD_ROOT%{_libdir}/*.dll $RPM_BUILD_ROOT%{_datadir}/wine/windows/system
-cp -r $RPM_BUILD_ROOT%{_libdir}/wx $RPM_BUILD_ROOT%{arch}/lib/
-cp -r $RPM_BUILD_ROOT%{_includedir} $RPM_BUILD_ROOT%{arch}
-
-ln -s %{arch}/lib/wx/config/i386-mingw32-msw-ansi-release-2.8 $RPM_BUILD_ROOT%{_bindir}
-
-rm $RPM_BUILD_ROOT%{_bindir}/wx-config
+ln -s %{_libdir}/wx/config/i386-mingw32-msw-ansi-release-2.8 $RPM_BUILD_ROOT%{_sysbindir}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_bindir}/i386-mingw32-*
-%{arch}/lib/*.a
-%dir %{arch}/lib/wx
-%dir %{arch}/lib/wx/config
-%attr(755,root,root) %{arch}/lib/wx/config/*
-%{arch}/lib/wx/include
-%{arch}/include/*
+%attr(755,root,root) %{_sysbindir}/i386-mingw32-msw-ansi-release-*
+%{_libdir}/libwx_*.dll.a
+%dir %{_libdir}/wx
+%dir %{_libdir}/wx/config
+%attr(755,root,root) %{_libdir}/wx/config/*
+%{_libdir}/wx/include
+%{_includedir}/wx-*
 
 %files dll
 %defattr(644,root,root,755)
-%{_datadir}/wine/windows/system/*
+%{_dlldir}/wx*_gcc.dll
