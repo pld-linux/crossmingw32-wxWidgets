@@ -1,27 +1,29 @@
 %define		realname	wxWidgets
-Summary:	wxWidgets library - Mingw32 cross version
-Summary(pl.UTF-8):	Biblioteka wxWidgets - wersja skrośna dla Mingw32
+Summary:	wxWidgets library - MinGW32 cross version
+Summary(pl.UTF-8):	Biblioteka wxWidgets - wersja skrośna dla MinGW32
 Name:		crossmingw32-%{realname}
-Version:	2.8.7
+Version:	2.8.11
 Release:	1
 License:	wxWidgets Licence (LGPL v2+ with exception)
 Group:		Development/Libraries
 Source0:	http://ftp.wxwidgets.org/pub/%{version}/%{realname}-%{version}.tar.bz2
-# Source0-md5:	e3455083afdf6404a569a8bf0701cf13
+# Source0-md5:	303a2d5aeb6c79460c8088193d799147
 Patch0:		%{realname}-samples.patch
 Patch1:		%{realname}-ac.patch
-Patch2:		%{realname}-gif0delay.patch
+Patch2:		%{realname}-msw.patch
 URL:		http://www.wxWidgets.org/
 BuildRequires:	autoconf >= 2.58
 BuildRequires:	automake
-#BuildRequires:	bakefile >= 0.1.9
+#BuildRequires:	bakefile >= 0.2.1
 BuildRequires:	crossmingw32-gcc-c++
 BuildRequires:	crossmingw32-libjpeg
 BuildRequires:	crossmingw32-libpng
+BuildRequires:	crossmingw32-libtiff
 BuildRequires:	crossmingw32-runtime
 BuildRequires:	libtool
 Requires:	crossmingw32-libjpeg
 Requires:	crossmingw32-libpng
+Requires:	crossmingw32-libtiff
 Requires:	crossmingw32-runtime
 Obsoletes:	crossmingw32-wxMSW
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -44,6 +46,8 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 # arch-specific flags (like alpha's -mieee) are not valid for i386 gcc
 %define		optflags	-O2
 %endif
+# -z options are invalid for mingw linker
+%define		filterout_ld	-Wl,-z,.*
 
 %description
 wxWidgets is a free C++ library for cross-platform GUI development.
@@ -60,6 +64,9 @@ Windows, Mac) z tego samego kodu źródłowego.
 Summary:	%{realname} - DLL library for Windows
 Summary(pl.UTF-8):	%{realname} - biblioteka DLL dla Windows
 Group:		Applications/Emulators
+Requires:	crossmingw32-libjpeg-dll
+Requires:	crossmingw32-libpng-dll
+Requires:	crossmingw32-libtiff-dll
 
 %description dll
 %{realname} - DLL libraries for Windows.
@@ -78,26 +85,29 @@ cp -f /usr/share/automake/config.sub .
 %{__aclocal} -I build/aclocal
 %{__autoconf}
 
+# use hack to get GCC=yes (needed not to disable OLE support)
+# because AC_PROG_CC has been replaced by AC_BAKEFILE_PROG_CC, which doesn't set appropriate vars
 %configure \
+	ac_cv_c_compiler_gnu=yes \
+	--host=%{target} \
+	--target=%{target} \
 	--with-msw \
 	--with-opengl \
 	--disable-precomp-headers \
+	--enable-controls \
 	--enable-official-build \
 	--enable-std-iostreams \
-	--enable-controls \
-	--enable-tabdialog \
-	--host=%{target} \
-	--target=%{target}
+	--enable-tabdialog
 
 %{__make}
 
 %install
 rm -rf $RPM_BUILD_ROOT
+install -d $RPM_BUILD_ROOT{%{_dlldir},%{_sysbindir}}
 
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
 
-install -d $RPM_BUILD_ROOT%{_dlldir}
 mv -f $RPM_BUILD_ROOT%{_libdir}/*.dll $RPM_BUILD_ROOT%{_dlldir}
 
 %if 0%{!?debug:1}
@@ -105,7 +115,7 @@ mv -f $RPM_BUILD_ROOT%{_libdir}/*.dll $RPM_BUILD_ROOT%{_dlldir}
 %{target}-strip -g -R.comment -R.note $RPM_BUILD_ROOT%{_libdir}/*.a
 %endif
 
-ln -s %{_libdir}/wx/config/i386-mingw32-msw-ansi-release-2.8 $RPM_BUILD_ROOT%{_sysbindir}
+ln -sf %{_libdir}/wx/config/i386-mingw32-msw-ansi-release-2.8 $RPM_BUILD_ROOT%{_sysbindir}
 
 %clean
 rm -rf $RPM_BUILD_ROOT

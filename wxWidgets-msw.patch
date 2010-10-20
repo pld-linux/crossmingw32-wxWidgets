@@ -1,0 +1,13 @@
+--- wxWidgets-2.8.11/configure.in.orig	2010-10-19 09:12:38.779736853 +0200
++++ wxWidgets-2.8.11/configure.in	2010-10-19 09:13:00.015736853 +0200
+@@ -8399,9 +8399,7 @@
+ 
+ if test "$USE_WIN32" = 1; then
+     AC_CONFIG_COMMANDS(
+-        [
+-            rcdefs.h
+-        ],
++        [lib/wx/include/${TOOLCHAIN_FULLNAME}/wx/msw/rcdefs.h],
+         [
+             mkdir -p $outdir &&
+             $CPP $infile | sed 's/^# *[1-9].*//;s/^ *//;/./,/^$/!d' > $outdir/rcdefs.h
