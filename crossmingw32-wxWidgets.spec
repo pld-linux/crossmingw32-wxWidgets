@@ -2,29 +2,33 @@
 Summary:	wxWidgets library - MinGW32 cross version
 Summary(pl.UTF-8):	Biblioteka wxWidgets - wersja skrośna dla MinGW32
 Name:		crossmingw32-%{realname}
-Version:	2.8.11
+Version:	3.0.0
 Release:	1
-License:	wxWidgets Licence (LGPL v2+ with exception)
+License:	wxWidgets Library Licence 3.1 (LGPL v2+ with exception)
 Group:		Development/Libraries
-Source0:	http://ftp.wxwidgets.org/pub/%{version}/%{realname}-%{version}.tar.bz2
-# Source0-md5:	303a2d5aeb6c79460c8088193d799147
+Source0:	http://downloads.sourceforge.net/wxwindows/%{realname}-%{version}.tar.bz2
+# Source0-md5:	241998efc12205172ed24c18788ea2cd
 Patch0:		%{realname}-samples.patch
 Patch1:		%{realname}-ac.patch
-Patch2:		%{realname}-msw.patch
+Patch2:		%{realname}-gifdelay.patch
+Patch3:		%{realname}-msw.patch
 URL:		http://www.wxWidgets.org/
 BuildRequires:	autoconf >= 2.58
 BuildRequires:	automake
 #BuildRequires:	bakefile >= 0.2.1
+BuildRequires:	crossmingw32-expat
 BuildRequires:	crossmingw32-gcc-c++
 BuildRequires:	crossmingw32-libjpeg
 BuildRequires:	crossmingw32-libpng
 BuildRequires:	crossmingw32-libtiff
-BuildRequires:	crossmingw32-runtime
+BuildRequires:	crossmingw32-w32api
+BuildRequires:	crossmingw32-zlib >= 1.1.4
 BuildRequires:	libtool
+Requires:	crossmingw32-expat
 Requires:	crossmingw32-libjpeg
 Requires:	crossmingw32-libpng
 Requires:	crossmingw32-libtiff
-Requires:	crossmingw32-runtime
+Requires:	crossmingw32-w32api
 Obsoletes:	crossmingw32-wxMSW
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -46,8 +50,10 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 # arch-specific flags (like alpha's -mieee) are not valid for i386 gcc
 %define		optflags	-O2
 %endif
-# -z options are invalid for mingw linker
-%define		filterout_ld	-Wl,-z,.*
+# -z options are invalid for mingw linker, most of -f options are Linux-specific
+%define		filterout_ld    -Wl,-z,.*
+%define		filterout_c	-f[-a-z0-9=]*
+%define		filterout_cxx	-f[-a-z0-9=]*
 
 %description
 wxWidgets is a free C++ library for cross-platform GUI development.
@@ -64,9 +70,11 @@ Windows, Mac) z tego samego kodu źródłowego.
 Summary:	%{realname} - DLL library for Windows
 Summary(pl.UTF-8):	%{realname} - biblioteka DLL dla Windows
 Group:		Applications/Emulators
+Requires:	crossmingw32-expat-dll
 Requires:	crossmingw32-libjpeg-dll
 Requires:	crossmingw32-libpng-dll
 Requires:	crossmingw32-libtiff-dll
+Requires:	crossmingw32-zlib-dll >= 1.1.4
 
 %description dll
 %{realname} - DLL libraries for Windows.
@@ -85,19 +93,18 @@ cp -f /usr/share/automake/config.sub .
 %{__aclocal} -I build/aclocal
 %{__autoconf}
 
-# use hack to get GCC=yes (needed not to disable OLE support)
-# because AC_PROG_CC has been replaced by AC_BAKEFILE_PROG_CC, which doesn't set appropriate vars
 %configure \
-	ac_cv_c_compiler_gnu=yes \
 	--host=%{target} \
 	--target=%{target} \
-	--with-msw \
-	--with-opengl \
 	--disable-precomp-headers \
+	--enable-calendar \
 	--enable-controls \
-	--enable-official-build \
+	--enable-plugins \
 	--enable-std-iostreams \
-	--enable-tabdialog
+	--enable-tabdialog \
+	--enable-vendor=pld \
+	--with-msw \
+	--with-opengl
 
 %{__make}
 
@@ -115,21 +122,54 @@ mv -f $RPM_BUILD_ROOT%{_libdir}/*.dll $RPM_BUILD_ROOT%{_dlldir}
 %{target}-strip -g -R.comment -R.note $RPM_BUILD_ROOT%{_libdir}/*.a
 %endif
 
-ln -sf %{_libdir}/wx/config/i386-mingw32-msw-ansi-release-2.8 $RPM_BUILD_ROOT%{_sysbindir}
+ln -sf %{_libdir}/wx/config/i386-mingw32-msw-unicode-3.0 $RPM_BUILD_ROOT%{_sysbindir}/i386-mingw32-wx-msw-unicode-config
+
+# use from native wxWidgets if needed
+%{__rm} -r $RPM_BUILD_ROOT%{_datadir}/{aclocal,bakefile,locale}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_sysbindir}/i386-mingw32-msw-ansi-release-*
-%{_libdir}/libwx_*.dll.a
+%attr(755,root,root) %{_sysbindir}/i386-mingw32-wx-msw-unicode-config
+%{_libdir}/libwx_baseu-3.0-i386-mingw32.dll.a
+%{_libdir}/libwx_baseu_net-3.0-i386-mingw32.dll.a
+%{_libdir}/libwx_baseu_xml-3.0-i386-mingw32.dll.a
+%{_libdir}/libwx_mswu_adv-3.0-i386-mingw32.dll.a
+%{_libdir}/libwx_mswu_aui-3.0-i386-mingw32.dll.a
+%{_libdir}/libwx_mswu_core-3.0-i386-mingw32.dll.a
+%{_libdir}/libwx_mswu_gl-3.0-i386-mingw32.dll.a
+%{_libdir}/libwx_mswu_html-3.0-i386-mingw32.dll.a
+%{_libdir}/libwx_mswu_media-3.0-i386-mingw32.dll.a
+%{_libdir}/libwx_mswu_propgrid-3.0-i386-mingw32.dll.a
+%{_libdir}/libwx_mswu_qa-3.0-i386-mingw32.dll.a
+%{_libdir}/libwx_mswu_ribbon-3.0-i386-mingw32.dll.a
+%{_libdir}/libwx_mswu_richtext-3.0-i386-mingw32.dll.a
+%{_libdir}/libwx_mswu_stc-3.0-i386-mingw32.dll.a
+%{_libdir}/libwx_mswu_webview-3.0-i386-mingw32.dll.a
+%{_libdir}/libwx_mswu_xrc-3.0-i386-mingw32.dll.a
 %dir %{_libdir}/wx
 %dir %{_libdir}/wx/config
-%attr(755,root,root) %{_libdir}/wx/config/*
+%attr(755,root,root) %{_libdir}/wx/config/i386-mingw32-msw-unicode-3.0
 %{_libdir}/wx/include
-%{_includedir}/wx-*
+%{_includedir}/wx-3.0
 
 %files dll
 %defattr(644,root,root,755)
-%{_dlldir}/wx*_gcc.dll
+%{_dlldir}/wxbase30u_gcc_pld.dll
+%{_dlldir}/wxbase30u_net_gcc_pld.dll
+%{_dlldir}/wxbase30u_xml_gcc_pld.dll
+%{_dlldir}/wxmsw30u_adv_gcc_pld.dll
+%{_dlldir}/wxmsw30u_aui_gcc_pld.dll
+%{_dlldir}/wxmsw30u_core_gcc_pld.dll
+%{_dlldir}/wxmsw30u_gl_gcc_pld.dll
+%{_dlldir}/wxmsw30u_html_gcc_pld.dll
+%{_dlldir}/wxmsw30u_media_gcc_pld.dll
+%{_dlldir}/wxmsw30u_propgrid_gcc_pld.dll
+%{_dlldir}/wxmsw30u_qa_gcc_pld.dll
+%{_dlldir}/wxmsw30u_ribbon_gcc_pld.dll
+%{_dlldir}/wxmsw30u_richtext_gcc_pld.dll
+%{_dlldir}/wxmsw30u_stc_gcc_pld.dll
+%{_dlldir}/wxmsw30u_webview_gcc_pld.dll
+%{_dlldir}/wxmsw30u_xrc_gcc_pld.dll
