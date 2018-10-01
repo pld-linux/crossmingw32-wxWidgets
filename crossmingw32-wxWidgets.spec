@@ -2,12 +2,12 @@
 Summary:	wxWidgets library - MinGW32 cross version
 Summary(pl.UTF-8):	Biblioteka wxWidgets - wersja skrośna dla MinGW32
 Name:		crossmingw32-%{realname}
-Version:	3.0.2
+Version:	3.0.4
 Release:	1
 License:	wxWidgets Library Licence 3.1 (LGPL v2+ with exception)
 Group:		Development/Libraries
 Source0:	http://downloads.sourceforge.net/wxwindows/%{realname}-%{version}.tar.bz2
-# Source0-md5:	ba4cd1f3853d0cd49134c5ae028ad080
+# Source0-md5:	b0035731777acc5597cea8982da10317
 Patch0:		%{realname}-samples.patch
 Patch1:		%{realname}-ac.patch
 Patch2:		%{realname}-gifdelay.patch
