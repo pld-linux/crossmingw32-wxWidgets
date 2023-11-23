@@ -1,11 +1,10 @@
---- wxWidgets-2.5.4/configure.in~	2005-02-28 15:03:24.811627176 +0100
-+++ wxWidgets-2.5.4/configure.in	2005-02-28 15:08:28.636438784 +0100
-@@ -5069,7 +5069,7 @@
-         fi
+--- wxWidgets-3.2.4/configure.in.orig	2023-11-18 20:56:18.286637239 +0100
++++ wxWidgets-3.2.4/configure.in	2023-11-18 20:58:09.269369327 +0100
+@@ -6393,7 +6393,6 @@ if test "$wxUSE_DATETIME" = "yes"; then
+         AC_DEFINE(HAVE_NL_TIME_FIRST_WEEKDAY)
      fi
  
 -    SAMPLES_SUBDIRS="$SAMPLES_SUBDIRS typetest"
-+    #SAMPLES_SUBDIRS="$SAMPLES_SUBDIRS typetest"
  fi
  
  dnl ------------------------------------------------------------------------
