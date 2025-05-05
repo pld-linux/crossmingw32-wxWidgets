@@ -1,0 +1,199 @@
+--- wxWidgets-3.2.8/src/msw/control.cpp.orig	2025-04-24 21:21:09.000000000 +0200
++++ wxWidgets-3.2.8/src/msw/control.cpp	2025-05-05 20:20:42.896776272 +0200
+@@ -262,31 +262,31 @@ bool wxControl::MSWOnNotify(int idCtrl,
+     NMHDR *hdr = (NMHDR*) lParam;
+     switch ( hdr->code )
+     {
+-        case NM_CLICK:
++        case (UINT)NM_CLICK:
+             eventType = wxEVT_COMMAND_LEFT_CLICK;
+             break;
+ 
+-        case NM_DBLCLK:
++        case (UINT)NM_DBLCLK:
+             eventType = wxEVT_COMMAND_LEFT_DCLICK;
+             break;
+ 
+-        case NM_RCLICK:
++        case (UINT)NM_RCLICK:
+             eventType = wxEVT_COMMAND_RIGHT_CLICK;
+             break;
+ 
+-        case NM_RDBLCLK:
++        case (UINT)NM_RDBLCLK:
+             eventType = wxEVT_COMMAND_RIGHT_DCLICK;
+             break;
+ 
+-        case NM_SETFOCUS:
++        case (UINT)NM_SETFOCUS:
+             eventType = wxEVT_COMMAND_SET_FOCUS;
+             break;
+ 
+-        case NM_KILLFOCUS:
++        case (UINT)NM_KILLFOCUS:
+             eventType = wxEVT_COMMAND_KILL_FOCUS;
+             break;
+ 
+-        case NM_RETURN:
++        case (UINT)NM_RETURN:
+             eventType = wxEVT_COMMAND_ENTER;
+             break;
+ 
+--- wxWidgets-3.2.8/src/msw/headerctrl.cpp.orig	2025-04-24 21:21:09.000000000 +0200
++++ wxWidgets-3.2.8/src/msw/headerctrl.cpp	2025-05-05 20:23:05.336004612 +0200
+@@ -800,8 +800,8 @@ bool wxMSWHeaderCtrl::MSWOnNotify(int id
+             // although we should get the notifications about the right clicks
+             // via HDN_ITEM[DBL]CLICK too according to MSDN this simply doesn't
+             // happen in practice on any Windows system up to 2003
+-        case NM_RCLICK:
+-        case NM_RDBLCLK:
++        case (UINT)NM_RCLICK:
++        case (UINT)NM_RDBLCLK:
+             {
+                 POINT pt;
+                 idx = wxMSWGetColumnClicked(&nmhdr->hdr, &pt);
+@@ -962,7 +962,7 @@ bool wxMSWHeaderCtrl::MSWOnNotify(int id
+             m_colBeingDragged = -1;
+             break;
+ 
+-        case NM_RELEASEDCAPTURE:
++        case (UINT)NM_RELEASEDCAPTURE:
+             evtType = wxEVT_HEADER_DRAGGING_CANCELLED;
+ 
+             // Dragging the column was cancelled.
+@@ -972,7 +972,7 @@ bool wxMSWHeaderCtrl::MSWOnNotify(int id
+         // other events
+         // ------------
+ 
+-        case NM_CUSTOMDRAW:
++        case (UINT)NM_CUSTOMDRAW:
+             if ( m_customDraw )
+             {
+                 *result = m_customDraw->HandleCustomDraw(lParam);
+--- wxWidgets-3.2.8/src/msw/listctrl.cpp.orig	2025-04-24 21:21:09.000000000 +0200
++++ wxWidgets-3.2.8/src/msw/listctrl.cpp	2025-05-05 20:38:38.684281564 +0200
+@@ -2351,7 +2351,7 @@ bool wxListCtrl::MSWOnNotify(int idCtrl,
+             }
+             break;
+ 
+-            case NM_RCLICK:
++            case (UINT)NM_RCLICK:
+                 {
+                     POINT ptClick;
+ 
+@@ -2373,7 +2373,7 @@ bool wxListCtrl::MSWOnNotify(int idCtrl,
+                 // doesn't seem to have any negative consequences
+                 return true;
+ 
+-            case NM_CUSTOMDRAW:
++            case (UINT)NM_CUSTOMDRAW:
+                 if ( m_headerCustomDraw )
+                 {
+                     *result = m_headerCustomDraw->HandleCustomDraw(lParam);
+@@ -2631,7 +2631,7 @@ bool wxListCtrl::MSWOnNotify(int idCtrl,
+                 }
+                 break;
+ 
+-            case NM_DBLCLK:
++            case (UINT)NM_DBLCLK:
+                 // if the user processes it in wxEVT_COMMAND_LEFT_CLICK(), don't do
+                 // anything else
+                 if ( wxListCtrlBase::MSWOnNotify(idCtrl, lParam, result) )
+@@ -2653,7 +2653,7 @@ bool wxListCtrl::MSWOnNotify(int idCtrl,
+                 event.m_item.m_data = GetItemData(iItem);
+                 break;
+ 
+-            case NM_CLICK:
++            case (UINT)NM_CLICK:
+                 processed = false;
+ 
+                 // In virtual mode, check if user clicks on a checkbox.
+@@ -2680,7 +2680,7 @@ bool wxListCtrl::MSWOnNotify(int idCtrl,
+                 }
+                 break;
+ 
+-            case NM_RCLICK:
++            case (UINT)NM_RCLICK:
+                 // if the user processes it in wxEVT_COMMAND_RIGHT_CLICK(),
+                 // don't do anything else
+                 if ( wxListCtrlBase::MSWOnNotify(idCtrl, lParam, result) )
+@@ -2707,7 +2707,7 @@ bool wxListCtrl::MSWOnNotify(int idCtrl,
+                 }
+                 break;
+ 
+-            case NM_CUSTOMDRAW:
++            case (UINT)NM_CUSTOMDRAW:
+                 *result = OnCustomDraw(lParam);
+ 
+                 return *result != CDRF_DODEFAULT;
+--- wxWidgets-3.2.8/src/msw/treectrl.cpp.orig	2025-04-24 21:21:09.000000000 +0200
++++ wxWidgets-3.2.8/src/msw/treectrl.cpp	2025-05-05 20:43:07.419492367 +0200
+@@ -3186,7 +3186,7 @@ wxTreeCtrl::MSWWindowProc(WXUINT nMsg, W
+                     NMHDR nmhdr;
+                     nmhdr.hwndFrom = GetHwnd();
+                     nmhdr.idFrom = ::GetWindowLong(GetHwnd(), GWL_ID);
+-                    nmhdr.code = NM_RCLICK;
++                    nmhdr.code = (UINT)NM_RCLICK;
+                     ::SendMessage(::GetParent(GetHwnd()), WM_NOTIFY,
+                                   nmhdr.idFrom, (LPARAM)&nmhdr);
+                     processed = true;
+@@ -3564,7 +3564,7 @@ bool wxTreeCtrl::MSWOnNotify(int idCtrl,
+         // instead of explicitly checking for _WIN32_IE, check if the
+         // required symbols are available in the headers
+ #if defined(CDDS_PREPAINT)
+-        case NM_CUSTOMDRAW:
++        case (UINT)NM_CUSTOMDRAW:
+             {
+                 LPNMTVCUSTOMDRAW lptvcd = (LPNMTVCUSTOMDRAW)lParam;
+                 NMCUSTOMDRAW& nmcd = lptvcd->nmcd;
+@@ -3691,7 +3691,7 @@ bool wxTreeCtrl::MSWOnNotify(int idCtrl,
+             return true;
+ #endif // have owner drawn support in headers
+ 
+-        case NM_CLICK:
++        case (UINT)NM_CLICK:
+             {
+                 DWORD pos = GetMessagePos();
+                 POINT point;
+@@ -3710,8 +3710,8 @@ bool wxTreeCtrl::MSWOnNotify(int idCtrl,
+                 break;
+             }
+ 
+-        case NM_DBLCLK:
+-        case NM_RCLICK:
++        case (UINT)NM_DBLCLK:
++        case (UINT)NM_RCLICK:
+             {
+                 TV_HITTESTINFO tvhti;
+                 wxGetCursorPosMSW(&tvhti.pt);
+@@ -3748,7 +3748,7 @@ bool wxTreeCtrl::MSWOnNotify(int idCtrl,
+     // post processing
+     switch ( hdr->code )
+     {
+-        case NM_DBLCLK:
++        case (UINT)NM_DBLCLK:
+             // we translate NM_DBLCLK into ACTIVATED event and if the user
+             // handled the activation of the item we shouldn't proceed with
+             // also using the same double click for toggling the item expanded
+@@ -3757,7 +3757,7 @@ bool wxTreeCtrl::MSWOnNotify(int idCtrl,
+             *result = processed;
+             break;
+ 
+-        case NM_RCLICK:
++        case (UINT)NM_RCLICK:
+             // prevent tree control from sending WM_CONTEXTMENU to our parent
+             // (which it does if NM_RCLICK is not handled) because we want to
+             // send it to the control itself
+--- wxWidgets-3.2.8/src/msw/hyperlink.cpp.orig	2025-04-24 21:21:09.000000000 +0200
++++ wxWidgets-3.2.8/src/msw/hyperlink.cpp	2025-05-05 20:44:27.139060489 +0200
+@@ -167,8 +167,8 @@ bool wxHyperlinkCtrl::MSWOnNotify(int id
+     {
+         switch ( ((LPNMHDR) lParam)->code )
+         {
+-            case NM_CLICK:
+-            case NM_RETURN:
++            case (UINT)NM_CLICK:
++            case (UINT)NM_RETURN:
+                 SetVisited();
+                 SendEvent();
+ 
