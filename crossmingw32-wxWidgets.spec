@@ -22,6 +22,7 @@ BuildRequires:	crossmingw32-gcc-c++
 BuildRequires:	crossmingw32-libjpeg
 BuildRequires:	crossmingw32-libpng
 BuildRequires:	crossmingw32-libtiff
+BuildRequires:	crossmingw32-pcre2
 BuildRequires:	crossmingw32-w32api
 BuildRequires:	crossmingw32-zlib >= 1.1.4
 BuildRequires:	libtool
@@ -29,6 +30,7 @@ Requires:	crossmingw32-expat
 Requires:	crossmingw32-libjpeg
 Requires:	crossmingw32-libpng
 Requires:	crossmingw32-libtiff
+Requires:	crossmingw32-pcre2
 Requires:	crossmingw32-w32api
 Obsoletes:	crossmingw32-wxMSW < 2.5
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
