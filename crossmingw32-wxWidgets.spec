@@ -3,7 +3,7 @@ Summary:	wxWidgets library - MinGW32 cross version
 Summary(pl.UTF-8):	Biblioteka wxWidgets - wersja skrośna dla MinGW32
 Name:		crossmingw32-%{realname}
 Version:	3.2.10
-Release:	1
+Release:	2
 License:	wxWidgets Library Licence 3.1 (LGPL v2+ with exception)
 Group:		Development/Libraries
 #Source0Download: https://github.com/wxWidgets/wxWidgets/releases
@@ -98,6 +98,8 @@ cp -f /usr/share/automake/config.sub .
 %{__aclocal} -I build/aclocal
 %{__autoconf}
 
+unset PKG_CONFIG_PATH
+export PKG_CONFIG_LIBDIR=%{_pkgconfigdir}
 %configure \
 	--host=%{target} \
 	--target=%{target} \
@@ -107,6 +109,7 @@ cp -f /usr/share/automake/config.sub .
 	--enable-plugins \
 	--enable-std-iostreams \
 	--enable-vendor=pld \
+	--without-libcurl \
 	--with-msw \
 	--with-opengl
 
